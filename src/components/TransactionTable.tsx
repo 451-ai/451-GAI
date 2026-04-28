@@ -2,8 +2,22 @@ import React, { useMemo, useState } from 'react';
 import { Transaction } from '../types';
 import { formatCurrency, formatDate, cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { Download, LayoutDashboard, List, Search, ArrowUpRight, ArrowDownLeft, ReceiptText, PieChart } from 'lucide-react';
+import { Download, LayoutDashboard, List, Search, ArrowUpRight, ArrowDownLeft, ReceiptText, PieChart as PieIcon, PieChart } from 'lucide-react';
 import Papa from 'papaparse';
+import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip as ReTooltip, Legend as ReLegend } from 'recharts';
+
+const CHART_COLORS = [
+  '#000000', // Black
+  '#2563eb', // Blue
+  '#16a34a', // Green
+  '#dc2626', // Red
+  '#ca8a04', // Yellow
+  '#9333ea', // Purple
+  '#0891b2', // Cyan
+  '#ea580c', // Orange
+  '#4b5563', // gray-600
+  '#9ca3af', // gray-400
+];
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -167,7 +181,46 @@ export function TransactionTable({ transactions, onReset }: TransactionTableProp
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-12">
+            {/* Visualization Section */}
+            <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-8">
+                <PieIcon className="w-5 h-5 text-black" />
+                <h3 className="font-semibold text-xl tracking-tight">Spending Visualization</h3>
+              </div>
+              <div className="h-[400px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RePieChart>
+                    <Pie
+                      data={stats.sortedCategories}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={140}
+                      paddingAngle={5}
+                      dataKey="total"
+                      nameKey="name"
+                      stroke="none"
+                    >
+                      {stats.sortedCategories.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <ReTooltip 
+                      contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                    <ReLegend 
+                      verticalAlign="bottom" 
+                      height={36} 
+                      iconType="circle"
+                      formatter={(value) => <span className="text-xs font-medium text-gray-600 capitalize">{value}</span>}
+                    />
+                  </RePieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Category Breakdown */}
               <div className="bg-white border border-gray-100 rounded-3xl p-8 space-y-6 shadow-sm">
                 <div className="flex items-center justify-between">
