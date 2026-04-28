@@ -1,0 +1,6 @@
+{
+  "name": "StatementSense OCR",
+  "description": "Professional bank statement OCR tool powered by Gemini. Extract transactions from PDFs and images into structured CSV data with automatic categorization.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
